@@ -30,5 +30,14 @@ public class RestaurantManagerExceptionHandler {
 	        errorResponse.put("status", HttpStatus.BAD_REQUEST.toString());
 	        return new ResponseEntity<Map<String, String>>(errorResponse, HttpStatus.BAD_REQUEST);
 	    }
+	    
+	    @ExceptionHandler(UnavailableEntityException.class)
+	    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	    public ResponseEntity<Map<String, String>> handleUnavailableEntityException(UnavailableEntityException e) {
+	    	Map<String, String> errorResponse = new HashMap<>();
+	        errorResponse.put("message", e.getMessage());
+	        errorResponse.put("status", HttpStatus.BAD_REQUEST.toString());
+	        return new ResponseEntity<Map<String, String>>(errorResponse, HttpStatus.BAD_REQUEST);
+	    }
 
 }

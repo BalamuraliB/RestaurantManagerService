@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.swatkats.restaurantManager.DAO.MenuItem;
-import com.swatkats.restaurantManager.DTO.MenuItemRequest;
+import com.swatkats.restaurantManager.DTO.MenuItemData;
+import com.swatkats.restaurantManager.exception.InvalidRequestException;
+import com.swatkats.restaurantManager.exception.NoItemFoundException;
+import com.swatkats.restaurantManager.exception.UnavailableEntityException;
 import com.swatkats.restaurantManager.service.MenuItemService;
 
 @RestController
@@ -23,22 +26,22 @@ public class MenuItemController {
 	MenuItemService menuItemService;
 	
 	@GetMapping
-	public List<MenuItem> getAllAvailableMenuItems(){
+	public List<MenuItemData> getAllAvailableMenuItems() throws NoItemFoundException{
 		return menuItemService.getAllAvailableMenuItems();
 	}
 	
 	@GetMapping("/{id}")
-	public MenuItem getMenuItem(@PathVariable long id) {
+	public MenuItemData getMenuItem(@PathVariable long id) throws InvalidRequestException, UnavailableEntityException {
 		return menuItemService.getMenuItem(id);
 	}
 	
 	@PostMapping
-	public String saveMenu(@RequestBody MenuItemRequest request) {
+	public String saveMenu(@RequestBody MenuItemData request) throws InvalidRequestException {
 		return menuItemService.saveMenuItem(request);
 	}
 	
 	@PutMapping("/{id}")
-	public String updateMenu(@PathVariable long id, @RequestBody MenuItemRequest request) {
+	public String updateMenu(@PathVariable long id, @RequestBody MenuItemData request) throws InvalidRequestException {
 		return menuItemService.updateMenuItem(id, request);
 	}
 	
