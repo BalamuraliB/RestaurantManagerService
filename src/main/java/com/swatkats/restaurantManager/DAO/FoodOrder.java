@@ -11,13 +11,17 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.swatkats.restaurantManager.DTO.OrderData;
+
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "FoodOrder")
 @Getter
 @Setter
+@NoArgsConstructor
 public class FoodOrder {
 
 	@Id
@@ -35,5 +39,9 @@ public class FoodOrder {
 	@OneToMany(mappedBy="order")
 	private List<OrderMenu> menu;
 	
-	
+	public FoodOrder(OrderData request) {
+		super();
+		this.setStatus(request.getStatus());
+		this.setTableNo(request.getTableNo());
+	}
 }

@@ -19,6 +19,7 @@ import com.swatkats.restaurantManager.repository.InventoryMenuItemRepo;
 import com.swatkats.restaurantManager.repository.InventoryRepo;
 import com.swatkats.restaurantManager.repository.MenuItemRepo;
 import com.swatkats.restaurantManager.utils.RestaurantManagerConstants;
+import com.swatkats.restaurantManager.utils.ValidateUtils;
 
 @Service
 public class MenuItemService {
@@ -46,8 +47,8 @@ public class MenuItemService {
 	}
 	
 	public MenuItemData getMenuItem(long id) throws InvalidRequestException, UnavailableEntityException {
+		ValidateUtils.validateId(id);
 		Optional<MenuItem> menuItem = menuItemRepo.findById(id);
-		validateId(id);
 		if(menuItem.isEmpty()) {
 			throw new InvalidRequestException("No Menu with id: "+id+" found");
 		}
@@ -59,7 +60,7 @@ public class MenuItemService {
 	}
 	
 	public String saveMenuItem(MenuItemData request) throws InvalidRequestException{
-		validateMenuRequest(request);
+		ValidateUtils.validateMenuRequest(request);
 		MenuItem menuItem = new MenuItem(request);
 		processInventoryList(request.getInventoryList(), menuItem);
 		menuItemRepo.save(menuItem);
@@ -68,8 +69,8 @@ public class MenuItemService {
 	}
 	
 	public String updateMenuItem(long id, MenuItemData request) throws InvalidRequestException{
-		validateId(id);
-		validateMenuRequest(request);
+		ValidateUtils.validateId(id);
+		ValidateUtils.validateMenuRequest(request);
 		Optional<MenuItem> menuItem = menuItemRepo.findById(id);
 		if(menuItem.isEmpty()) {
 			throw new InvalidRequestException("No Menu with id: "+id+" found");
@@ -82,22 +83,6 @@ public class MenuItemService {
 		menuItemRepo.save(menuItem.get());
 		inventoryMenuRepo.saveAll(menuItem.get().getInventoryList());
 		return RestaurantManagerConstants.UPDATE_DATA_SUCCESS;
-	}
-	
-	public void validateMenuRequest(MenuItemData request) throws InvalidRequestException {
-		if(request==null 
-				|| request.getName() == null || request.getName().equalsIgnoreCase("") 
-				|| request.getPrice() == 0
-				|| request.getType() == null || request.getType().equals("") 
-				|| request.getInventoryList() == null || request.getInventoryList().size() == 0 ) {
-			throw new InvalidRequestException("Invalid Data sent in request body"); 
-		}
-	}
-	
-	public void validateId(Long id) throws InvalidRequestException {
-		if(id == 0) {
-			throw new InvalidRequestException("Menu Item with id: "+id+" not found"); 
-		}
 	}
 	
 	public void processInventoryList(List<InventoryMenuItemData> requestList, MenuItem menuItem) throws InvalidRequestException {
@@ -113,7 +98,7 @@ public class MenuItemService {
 			} else {
 				Optional<Inventory> inventory = inventoryRepo.findById(inventoryItem.getInventoryId());
 				if(inventory.isEmpty()) {
-					throw new InvalidRequestException("No inventory menu correlation with id: "+inventoryItem.getId()+" found");
+					throw new InvalidRequestException("No inventory with id: "+inventoryItem.getInventoryId()+" found");
 				}
 				InventoryMenuItem invMenu = new InventoryMenuItem();
 				invMenu.setInventory(inventory.get());
