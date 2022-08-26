@@ -2,6 +2,7 @@ package com.swatkats.restaurantManager.DAO;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,7 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.swatkats.restaurantManager.DTO.MenuItemRequest;
+import com.swatkats.restaurantManager.DTO.MenuItemData;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,16 +36,23 @@ public class MenuItem {
 	private double price;
 	@Column(name = "type")
 	private String type;
-	@OneToMany(mappedBy = "menuItem")
+	@OneToMany(mappedBy = "menuItem", cascade = CascadeType.ALL)
 	private List<InventoryMenuItem> inventoryList;
 	
-	public MenuItem(MenuItemRequest request, List<InventoryMenuItem> inventoryList) {
+	public MenuItem(MenuItemData request, List<InventoryMenuItem> inventoryList) {
 		super();
-		this.setId(request.getId());
 		this.setAvailable(request.isAvailable());
 		this.setName(request.getName());
 		this.setPrice(request.getPrice());
 		this.setType(request.getType());
 		this.setInventoryList(inventoryList);
+	}
+	
+	public MenuItem(MenuItemData request) {
+		super();
+		this.setAvailable(request.isAvailable());
+		this.setName(request.getName());
+		this.setPrice(request.getPrice());
+		this.setType(request.getType());
 	}
 }
